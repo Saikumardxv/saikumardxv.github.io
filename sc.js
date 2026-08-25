@@ -510,9 +510,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (typingElement) {
         const texts = [
-            "portfolio.exe",
-            "Loading skills...",
-            "Building amazing projects..."
+            "Python Developer",
+            "Web Developer",
+            "Fullstack Developer"
         ];
         let textIndex = 0;
         let charIndex = 0;

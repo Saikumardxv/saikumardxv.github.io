@@ -379,6 +379,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (themeToggle) {
 
+        const savedTheme = localStorage.getItem("portfolio-theme");
+        const themeIcon = themeToggle.querySelector("i");
+
+        if (savedTheme === "light") {
+            document.body.classList.add("light-mode");
+            themeIcon?.classList.replace("fa-moon", "fa-sun");
+            themeToggle.setAttribute("aria-label", "Switch to dark theme");
+        } else {
+            themeToggle.setAttribute("aria-label", "Switch to light theme");
+        }
+
 
         themeToggle.addEventListener(
             "click",
@@ -387,6 +398,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 document.body.classList.toggle(
                     "light-mode"
+                );
+
+                localStorage.setItem(
+                    "portfolio-theme",
+                    document.body.classList.contains("light-mode") ? "light" : "dark"
                 );
 
 
@@ -409,6 +425,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     )
                 ) {
 
+                    themeToggle.setAttribute("aria-label", "Switch to dark theme");
+
 
                     icon.classList.remove(
                         "fa-moon"
@@ -421,6 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
                 } else {
+
+                    themeToggle.setAttribute("aria-label", "Switch to light theme");
 
 
                     icon.classList.remove(

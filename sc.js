@@ -474,31 +474,84 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     /* =====================================================
-       RESUME CHECK
+       RESUME PDF DOWNLOAD
     ===================================================== */
 
-    const resumeLinks =
-        document.querySelectorAll(
-            'a[href="resume.pdf"]'
-        );
+    const resumeLink = document.getElementById("download-resume");
 
+    if (resumeLink) {
+        resumeLink.addEventListener("click", (event) => {
+            event.preventDefault();
 
-    resumeLinks.forEach((link) => {
+            const lines = [
+                "GUDIPATI SAI KUMAR",
+                "Web Developer | Computer Science Student",
+                "Email: gudipatisaikumar46@gmail.com",
+                "",
+                "PROFILE",
+                "Computer Science student passionate about web and full stack development.",
+                "Focused on building responsive, interactive and user-friendly applications.",
+                "",
+                "EDUCATION",
+                "Bachelor of Technology, Computer Science and Engineering",
+                "DVR&Dr.HS MIC College of Technology, Kanchikacherla, Andhra Pradesh",
+                "2023 - 2027",
+                "",
+                "SKILLS",
+                "HTML, CSS, JavaScript, Python, React, Node.js, Git, GitHub",
+                "",
+                "PROJECTS",
+                "Weather Application (Weather/Now)",
+                "Real-time weather information application using an external API.",
+                "",
+                "CONTACT",
+                "Email: gudipatisaikumar46@gmail.com",
+                "GitHub: github.com/Saikumardxv/saikumardxv.github.io"
+            ];
 
+            const escapePdfText = (text) => text
+                .replace(/\\/g, "\\\\")
+                .replace(/\(/g, "\\(")
+                .replace(/\)/g, "\\)");
 
-        link.addEventListener(
-            "click",
-            () => {
+            const textCommands = lines.map((line, index) =>
+                `BT /F1 ${index === 0 ? 20 : index === 1 ? 11 : 10} Tf 54 ${760 - index * 25} Td (${escapePdfText(line)}) Tj ET`
+            ).join("\n");
 
+            const objects = [
+                "<< /Type /Catalog /Pages 2 0 R >>",
+                "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
+                "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
+                "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+                `<< /Length ${textCommands.length} >>\nstream\n${textCommands}\nendstream`
+            ];
 
-                console.log(
-                    "Opening resume.pdf"
-                );
+            let pdf = "%PDF-1.4\n%\xE2\xE3\xCF\xD3\n";
+            const offsets = [0];
 
-            }
-        );
+            objects.forEach((object, index) => {
+                offsets.push(pdf.length);
+                pdf += `${index + 1} 0 obj\n${object}\nendobj\n`;
+            });
 
-    });
+            const xrefOffset = pdf.length;
+            pdf += `xref\n0 ${objects.length + 1}\n0000000000 65535 f \n`;
+            offsets.slice(1).forEach((offset) => {
+                pdf += `${String(offset).padStart(10, "0")} 00000 n \n`;
+            });
+            pdf += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`;
+
+            const blob = new Blob([pdf], { type: "application/pdf" });
+            const downloadUrl = URL.createObjectURL(blob);
+            const download = document.createElement("a");
+            download.href = downloadUrl;
+            download.download = "Gudipati-Sai-Kumar-Resume.pdf";
+            document.body.appendChild(download);
+            download.click();
+            download.remove();
+            URL.revokeObjectURL(downloadUrl);
+        });
+    }
 
 
 
